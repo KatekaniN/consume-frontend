@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Pull Request Fetcher</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div class="header">
+        <div class="header-container">
+            <a href="#" class="logo">
+                <i class="fab fa-github"></i>
+            </a>
+            <div class="search-bar">
+                <input type="text" placeholder="Search or jump to...">
+            </div>
+            <nav class="nav-links">
+                <a href="#">Pull requests</a>
+                <a href="#">Issues</a>
+                <a href="#">Marketplace</a>
+                <a href="#">Explore</a>
+            </nav>
+            <div class="user-menu">
+                <button class="notification-button">
+                    <i class="fas fa-bell"></i>
+                </button>
+                <img src="media/avatar.jpg" alt="User Avatar" class="user-avatar">
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="repository-header">
+            <div class="repository-info">
+                <a href="#" class="owner-name">YourOrg</a>
+                <span>/</span>
+                <a href="#" class="repo-name">YourRepo</a>
+            </div>
+            <div class="repository-actions">
+                <button class="watch-button">
+                    <i class="fas fa-eye"></i> Watch
+                </button>
+                <button class="star-button">
+                    <i class="fas fa-star"></i> Star
+                </button>
+                <button class="fork-button">
+                    <i class="fas fa-code-branch"></i> Fork
+                </button>
+            </div>
+        </div>
+
+        <div class="tab-navigation">
+            <a href="#" class="tab active">
+                <i class="fas fa-code"></i> Code
+            </a>
+            <a href="#" class="tab">
+                <i class="fas fa-exclamation-circle"></i> Issues
+            </a>
+            <a href="#" class="tab">
+                <i class="fas fa-code-pull-request"></i> Pull requests
+            </a>
+            <a href="#" class="tab">
+                <i class="fas fa-project-diagram"></i> Projects
+            </a>
+            <a href="#" class="tab">
+                <i class="fas fa-book"></i> Wiki
+            </a>
+            <a href="#" class="tab">
+                <i class="fas fa-chart-bar"></i> Insights
+            </a>
+        </div>
+
+        <div class="content-container">
+            <div class="file-navigation">
+                <button class="branch-button">
+                    Branch: main <i class="fas fa-caret-down"></i>
+                </button>
+                <div class="file-path">
+                    <i class="fas fa-folder"></i>
+                    <span>YourFilePath</span>
+                </div>
+            </div>
+
+            <div class="input-form">
+                <label for="owner">Owner:</label>
+                <input type="text" id="owner" name="owner" placeholder="e.g., Umuzi-org" required>
+
+                <label for="repo">Repository:</label>
+                <input type="text" id="repo" name="repo" placeholder="e.g., ACN-syllabus" required>
+
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" name="startDate" required>
+
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" name="endDate" required>
+
+                <button id="fetchButton">Fetch Pull Requests</button>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="filter-controls">
+                <div class="state-filters">
+                    <button class="filter-button active" data-state="all">All</button>
+                    <button class="filter-button" data-state="open">Open</button>
+                    <button class="filter-button" data-state="closed">Closed</button>
+                </div>
+                <div class="date-filter">
+                    <label for="filterStartDate">Filter Start Date:</label>
+                    <input type="date" id="filterStartDate" name="filterStartDate">
+                    <label for="filterEndDate">Filter End Date:</label>
+                    <input type="date" id="filterEndDate" name="filterEndDate">
+                    <button id="applyDateFilter">Apply Date Filter</button>
+                </div>
+            </div>
+
+            <div id="results" class="results-container">
+                <!-- Results will be displayed here -->
+            </div>
+
+            <div id="pagination" class="pagination-container">
+                <!-- Pagination controls will be added here -->
+            </div>
+
+            <div id="error-message" class="error-message">
+                <!-- Error messages will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
