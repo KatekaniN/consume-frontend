@@ -126,12 +126,10 @@ document.addEventListener("DOMContentLoaded", () => {
     endDate,
     githubToken
   ) {
-  
     console.log("Token Data Type:", typeof githubToken);
     console.log("Token being sent:", githubToken);
-    const encodedToken = encodeURIComponent(githubToken); 
-    const apiUrl = `http://localhost:3000/pulls?owner=${owner}&repo=${repo}&startDate=${startDate}&endDate=${endDate}&token=${encodedToken}`;
-
+    const encodedToken = encodeURIComponent(githubToken);
+    const apiUrl = `https://consume-backend.onrender.com/pulls?owner=${owner}&repo=${repo}&startDate=${startDate}&endDate=${endDate}&token=${encodedToken}`;
     try {
       const response = await fetch(apiUrl);
 
