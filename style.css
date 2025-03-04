@@ -308,9 +308,14 @@ a {
   cursor: default;
 }
 
+#fetchButton{
+  margin-top: 8px;
+}
+
 .error-message {
   color: #cb2431;
   margin-top: 16px;
+  margin-bottom:80px;
   padding: 12px;
   border: 1px solid #cb2431;
   background-color: #ffeef0;
