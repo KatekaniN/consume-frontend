@@ -314,8 +314,8 @@ a {
 
 .error-message {
   color: #cb2431;
-  margin-top: 16px;
-  margin-bottom:80px;
+  margin-top: 8px;
+  margin-bottom:8px;
   padding: 12px;
   border: 1px solid #cb2431;
   background-color: #ffeef0;
