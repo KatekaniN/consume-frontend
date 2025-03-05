@@ -126,8 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
     endDate,
     githubToken
   ) {
-    console.log("Token Data Type:", typeof githubToken);
-    console.log("Token being sent:", githubToken);
     const encodedToken = encodeURIComponent(githubToken);
     const apiUrl = `https://consume-backend.onrender.com/pulls?owner=${owner}&repo=${repo}&startDate=${startDate}&endDate=${endDate}&token=${encodedToken}`;
     try {
@@ -195,6 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
         currentPage--;
         displayPaginatedPullRequests(pullRequests, currentPage, perPage);
         updateActivePage(ul);
+        updatePaginationButtons(ul, totalPages); // Update button states
       }
     });
     prevLi.appendChild(prevLink);
@@ -213,6 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
         currentPage = pageNumber;
         displayPaginatedPullRequests(pullRequests, currentPage, perPage);
         updateActivePage(ul);
+        updatePaginationButtons(ul, totalPages); // Update button states
       });
       pageLi.appendChild(pageLink);
       ul.appendChild(pageLi);
@@ -230,6 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
         currentPage++;
         displayPaginatedPullRequests(pullRequests, currentPage, perPage);
         updateActivePage(ul);
+        updatePaginationButtons(ul, totalPages); // Update button states
       }
     });
     nextLi.appendChild(nextLink);
@@ -238,9 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
     paginationContainer.innerHTML = "";
     paginationContainer.appendChild(ul);
     updateActivePage(ul);
-
-    prevLi.classList.toggle("disabled", currentPage === 1);
-    nextLi.classList.toggle("disabled", currentPage === totalPages);
+    updatePaginationButtons(ul, totalPages); // Initial button states
   }
 
   function updateActivePage(paginationList) {
@@ -252,6 +251,14 @@ document.addEventListener("DOMContentLoaded", () => {
         link.classList.remove("active");
       }
     });
+  }
+
+  function updatePaginationButtons(paginationList, totalPages) {
+    const prevLi = paginationList.querySelector(".pagination-item:first-child");
+    const nextLi = paginationList.querySelector(".pagination-item:last-child");
+
+    prevLi.classList.toggle("disabled", currentPage === 1);
+    nextLi.classList.toggle("disabled", currentPage === totalPages);
   }
 
   function displayError(message) {
