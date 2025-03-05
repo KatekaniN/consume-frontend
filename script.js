@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentStateFilter = "all";
   let currentFilterStartDate = null;
   let currentFilterEndDate = null;
-  const visiblePageLinks = 5; // Number of visible page links
 
   function updateRepoHeader() {
     ownerNameElement.textContent = ownerInput.value || "YourOrg";
@@ -58,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const filteredPRs = filterPullRequests();
     currentPage = 1;
     displayPaginatedPullRequests(filteredPRs, currentPage, itemsPerPage);
-    setupPagination(filteredPRs, itemsPerPage, filteredPRs); // Pass filteredPRs
+    setupPagination(filteredPRs, itemsPerPage);
   }
 
   stateFilterButtons.forEach((button) => {
@@ -171,8 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resultsContainer.appendChild(ul);
   }
 
-  function setupPagination(pullRequests, perPage, filteredPRs) {
-    // Added filteredPRs parameter
+  function setupPagination(pullRequests, perPage) {
     const totalPages = Math.ceil(pullRequests.length / perPage);
 
     if (totalPages <= 1) {
@@ -195,15 +193,28 @@ document.addEventListener("DOMContentLoaded", () => {
         currentPage--;
         displayPaginatedPullRequests(pullRequests, currentPage, perPage);
         updateActivePage(ul);
-        updatePaginationButtons(ul, totalPages);
-        renderPageLinks(ul, totalPages, pullRequests, perPage); // Pass perPage
       }
     });
     prevLi.appendChild(prevLink);
     ul.appendChild(prevLi);
 
-    // Page number buttons - Initial rendering
-    renderPageLinks(ul, totalPages, pullRequests, perPage); // Pass perPage
+    // Page number buttons
+    for (let i = 1; i <= totalPages; i++) {
+      const pageLi = document.createElement("li");
+      pageLi.classList.add("pagination-item");
+      const pageLink = document.createElement("a");
+      pageLink.href = "#";
+      pageLink.textContent = i;
+      pageLink.addEventListener("click", (event) => {
+        event.preventDefault();
+        const pageNumber = parseInt(event.target.textContent);
+        currentPage = pageNumber;
+        displayPaginatedPullRequests(pullRequests, currentPage, perPage);
+        updateActivePage(ul);
+      });
+      pageLi.appendChild(pageLink);
+      ul.appendChild(pageLi);
+    }
 
     // Next button
     const nextLi = document.createElement("li");
@@ -217,8 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
         currentPage++;
         displayPaginatedPullRequests(pullRequests, currentPage, perPage);
         updateActivePage(ul);
-        updatePaginationButtons(ul, totalPages);
-        renderPageLinks(ul, totalPages, pullRequests, perPage); // Pass perPage
       }
     });
     nextLi.appendChild(nextLink);
@@ -227,45 +236,9 @@ document.addEventListener("DOMContentLoaded", () => {
     paginationContainer.innerHTML = "";
     paginationContainer.appendChild(ul);
     updateActivePage(ul);
-    updatePaginationButtons(ul, totalPages);
-  }
 
-  function renderPageLinks(ul, totalPages, pullRequests, perPage) {
-    // Added perPage parameter
-    // Remove existing page links
-    const existingPageLinks = ul.querySelectorAll(".page-number");
-    existingPageLinks.forEach((link) => link.parentNode.remove());
-
-    let startPage = Math.max(1, currentPage - Math.floor(visiblePageLinks / 2));
-    let endPage = Math.min(totalPages, startPage + visiblePageLinks - 1);
-
-    // Adjust startPage if endPage is too close to totalPages
-    if (endPage - startPage + 1 < visiblePageLinks) {
-      startPage = Math.max(1, endPage - visiblePageLinks + 1);
-    }
-
-    // Create and insert page number buttons
-    for (let i = startPage; i <= endPage; i++) {
-      const pageLi = document.createElement("li");
-      pageLi.classList.add("pagination-item", "page-number"); // Add page-number class
-      const pageLink = document.createElement("a");
-      pageLink.href = "#";
-      pageLink.textContent = i;
-      pageLink.addEventListener("click", (event) => {
-        event.preventDefault();
-        const pageNumber = parseInt(event.target.textContent);
-        currentPage = pageNumber;
-        displayPaginatedPullRequests(pullRequests, currentPage, perPage);
-        updateActivePage(ul);
-        updatePaginationButtons(ul, totalPages);
-        renderPageLinks(ul, totalPages, pullRequests, perPage); // Pass perPage
-      });
-      pageLi.appendChild(pageLink);
-      // Insert before the "Next" button
-      ul.insertBefore(pageLi, ul.querySelector(".pagination-item:last-child"));
-    }
-
-    updateActivePage(ul);
+    prevLi.classList.toggle("disabled", currentPage === 1);
+    nextLi.classList.toggle("disabled", currentPage === totalPages);
   }
 
   function updateActivePage(paginationList) {
@@ -277,14 +250,6 @@ document.addEventListener("DOMContentLoaded", () => {
         link.classList.remove("active");
       }
     });
-  }
-
-  function updatePaginationButtons(paginationList, totalPages) {
-    const prevLi = paginationList.querySelector(".pagination-item:first-child");
-    const nextLi = paginationList.querySelector(".pagination-item:last-child");
-
-    prevLi.classList.toggle("disabled", currentPage === 1);
-    nextLi.classList.toggle("disabled", currentPage === totalPages);
   }
 
   function displayError(message) {
