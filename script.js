@@ -159,11 +159,11 @@ document.addEventListener("DOMContentLoaded", () => {
     paginatedPRs.forEach((pr) => {
       const li = document.createElement("li");
       li.innerHTML = `
-            <strong>${pr.title}</strong><br>
-            User: ${pr.user}<br>
-            State: ${pr.state}<br>
-            Created: ${pr.created_at}
-        `;
+              <strong>${pr.title}</strong><br>
+              User: ${pr.user}<br>
+              State: ${pr.state}<br>
+              Created: ${pr.created_at}
+          `;
       ul.appendChild(li);
     });
 
