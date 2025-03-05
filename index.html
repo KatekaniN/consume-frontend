@@ -54,23 +54,29 @@
         .hidden {
             display: none;
         }
+
+        /* Style to change cursor for links with href="#" */
+        a[href="#"] {
+            cursor: default;
+            /* or 'auto' if you prefer */
+        }
     </style>
 </head>
 
 <body>
     <div class="header">
         <div class="header-container">
-            <a class="logo">
+            <a href="#" class="logo">
                 <i class="fab fa-github"></i>
             </a>
             <div class="search-bar">
                 <input type="text" placeholder="Search or jump to...">
             </div>
             <nav class="nav-links">
-                <a>Pull requests</a>
-                <a>Issues</a>
-                <a>Marketplace</a>
-                <a>Explore</a>
+                <a href="#">Pull requests</a>
+                <a href="#">Issues</a>
+                <a href="#">Marketplace</a>
+                <a href="#">Explore</a>
             </nav>
             <div class="user-menu">
                 <button class="notification-button">
@@ -84,9 +90,9 @@
     <div class="main-content">
         <div class="repository-header">
             <div class="repository-info">
-                <a class="owner-name">YourOrg</a>
+                <a href="#" class="owner-name">YourOrg</a>
                 <span>/</span>
-                <a class="repo-name">YourRepo</a>
+                <a href="#" class="repo-name">YourRepo</a>
             </div>
             <div class="repository-actions">
                 <button class="watch-button">
@@ -102,22 +108,22 @@
         </div>
 
         <div class="tab-navigation">
-            <a class="tab active">
+            <a href="#" class="tab active">
                 <i class="fas fa-code"></i> Code
             </a>
-            <a class="tab">
+            <a href="#" class="tab">
                 <i class="fas fa-exclamation-circle"></i> Issues
             </a>
-            <a class="tab">
+            <a href="#" class="tab">
                 <i class="fas fa-code-pull-request"></i> Pull requests
             </a>
-            <a class="tab">
+            <a href="#" class="tab">
                 <i class="fas fa-project-diagram"></i> Projects
             </a>
-            <a class="tab">
+            <a href="#" class="tab">
                 <i class="fas fa-book"></i> Wiki
             </a>
-            <a class="tab">
+            <a href="#" class="tab">
                 <i class="fas fa-chart-bar"></i> Insights
             </a>
         </div>
