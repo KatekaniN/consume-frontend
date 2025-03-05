@@ -9,16 +9,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const paginationContainer = document.getElementById("pagination");
   const loadingSpinner = document.createElement("div");
   loadingSpinner.classList.add("loading-spinner");
-
+  
   const ownerNameElement = document.querySelector(".owner-name");
   const repoNameElement = document.querySelector(".repo-name");
-
+  
   const stateFilterButtons = document.querySelectorAll(".filter-button");
   const filterStartDateInput = document.getElementById("filterStartDate");
   const filterEndDateInput = document.getElementById("filterEndDate");
   const applyDateFilterButton = document.getElementById("applyDateFilter");
   const githubTokenInput = document.getElementById("githubToken");
-
+  
   let allPullRequests = [];
   let currentPage = 1;
   const itemsPerPage = 10;
@@ -26,22 +26,22 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentFilterStartDate = null;
   let currentFilterEndDate = null;
   const visiblePageLinks = 5; // Number of visible page links
-
+  
   function updateRepoHeader() {
     ownerNameElement.textContent = ownerInput.value || "YourOrg";
     repoNameElement.textContent = repoInput.value || "YourRepo";
   }
-
+  
   ownerInput.addEventListener("input", updateRepoHeader);
   repoInput.addEventListener("input", updateRepoHeader);
-
+  
   function filterPullRequests() {
     let filteredPRs = allPullRequests;
-
+  
     if (currentStateFilter !== "all") {
       filteredPRs = filteredPRs.filter((pr) => pr.state === currentStateFilter);
     }
-
+  
     if (currentFilterStartDate && currentFilterEndDate) {
       const startDateObj = new Date(currentFilterStartDate);
       const endDateObj = new Date(currentFilterEndDate);
@@ -50,17 +50,17 @@ document.addEventListener("DOMContentLoaded", () => {
         return createdAt >= startDateObj && createdAt <= endDateObj;
       });
     }
-
+  
     return filteredPRs;
   }
-
+  
   function displayFilteredAndPaginatedPullRequests() {
     const filteredPRs = filterPullRequests();
     currentPage = 1;
     displayPaginatedPullRequests(filteredPRs, currentPage, itemsPerPage);
-    setupPagination(filteredPRs, itemsPerPage);
+    setupPagination(filteredPRs, itemsPerPage, filteredPRs); // Pass filteredPRs
   }
-
+  
   stateFilterButtons.forEach((button) => {
     button.addEventListener("click", () => {
       stateFilterButtons.forEach((btn) => btn.classList.remove("active"));
@@ -69,32 +69,32 @@ document.addEventListener("DOMContentLoaded", () => {
       displayFilteredAndPaginatedPullRequests();
     });
   });
-
+  
   applyDateFilterButton.addEventListener("click", () => {
     currentFilterStartDate = filterStartDateInput.value;
     currentFilterEndDate = filterEndDateInput.value;
     displayFilteredAndPaginatedPullRequests();
   });
-
+  
   fetchButton.addEventListener("click", async () => {
     const owner = ownerInput.value;
     const repo = repoInput.value;
     const startDate = startDateInput.value;
     const endDate = endDateInput.value;
     const githubToken = githubTokenInput.value;
-
+  
     if (!owner || !repo || !startDate || !endDate || !githubToken) {
       displayError("Please fill in all fields, including the GitHub token.");
       return;
     }
-
+  
     resultsContainer.innerHTML = "";
     hideError();
     paginationContainer.innerHTML = "";
-
+  
     resultsContainer.appendChild(loadingSpinner);
     loadingSpinner.style.display = "block";
-
+  
     try {
       allPullRequests = await fetchPullRequestsFromAPI(
         owner,
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
       loadingSpinner.style.display = "none";
     }
   });
-
+  
   async function fetchPullRequestsFromAPI(
     owner,
     repo,
@@ -131,31 +131,31 @@ document.addEventListener("DOMContentLoaded", () => {
     const apiUrl = `https://consume-backend.onrender.com/pulls?owner=${owner}&repo=${repo}&startDate=${startDate}&endDate=${endDate}&token=${encodedToken}`;
     try {
       const response = await fetch(apiUrl);
-
+  
       if (!response.ok) {
         throw new Error(`API request failed with status ${response.status}`);
       }
-
+  
       const data = await response.json();
       return data;
     } catch (error) {
       throw new Error(`Failed to fetch pull requests: ${error.message}`);
     }
   }
-
+  
   function displayPaginatedPullRequests(pullRequests, page, perPage) {
     const startIndex = (page - 1) * perPage;
     const endIndex = startIndex + perPage;
     const paginatedPRs = pullRequests.slice(startIndex, endIndex);
-
+  
     resultsContainer.innerHTML = "";
-
+  
     if (paginatedPRs.length === 0) {
       resultsContainer.innerHTML =
         "<p>No pull requests found for the given criteria.</p>";
       return;
     }
-
+  
     const ul = document.createElement("ul");
     paginatedPRs.forEach((pr) => {
       const li = document.createElement("li");
@@ -167,21 +167,21 @@ document.addEventListener("DOMContentLoaded", () => {
           `;
       ul.appendChild(li);
     });
-
+  
     resultsContainer.appendChild(ul);
   }
-
-  function setupPagination(pullRequests, perPage) {
+  
+  function setupPagination(pullRequests, perPage, filteredPRs) { // Added filteredPRs parameter
     const totalPages = Math.ceil(pullRequests.length / perPage);
-
+  
     if (totalPages <= 1) {
       paginationContainer.innerHTML = "";
       return;
     }
-
+  
     const ul = document.createElement("ul");
     ul.classList.add("pagination-list");
-
+  
     // Previous button
     const prevLi = document.createElement("li");
     prevLi.classList.add("pagination-item");
@@ -195,15 +195,15 @@ document.addEventListener("DOMContentLoaded", () => {
         displayPaginatedPullRequests(pullRequests, currentPage, perPage);
         updateActivePage(ul);
         updatePaginationButtons(ul, totalPages);
-        renderPageLinks(ul, totalPages); // Re-render page links
+        renderPageLinks(ul, totalPages, pullRequests); // Pass pullRequests
       }
     });
     prevLi.appendChild(prevLink);
     ul.appendChild(prevLi);
-
+  
     // Page number buttons - Initial rendering
-    renderPageLinks(ul, totalPages);
-
+    renderPageLinks(ul, totalPages, pullRequests); // Pass pullRequests
+  
     // Next button
     const nextLi = document.createElement("li");
     nextLi.classList.add("pagination-item");
@@ -217,31 +217,31 @@ document.addEventListener("DOMContentLoaded", () => {
         displayPaginatedPullRequests(pullRequests, currentPage, perPage);
         updateActivePage(ul);
         updatePaginationButtons(ul, totalPages);
-        renderPageLinks(ul, totalPages); // Re-render page links
+        renderPageLinks(ul, totalPages, pullRequests); // Pass pullRequests
       }
     });
     nextLi.appendChild(nextLink);
     ul.appendChild(nextLi);
-
+  
     paginationContainer.innerHTML = "";
     paginationContainer.appendChild(ul);
     updateActivePage(ul);
     updatePaginationButtons(ul, totalPages);
   }
-
-  function renderPageLinks(ul, totalPages) {
+  
+  function renderPageLinks(ul, totalPages, pullRequests) { // Added pullRequests parameter
     // Remove existing page links
     const existingPageLinks = ul.querySelectorAll(".page-number");
     existingPageLinks.forEach((link) => link.parentNode.remove());
-
+  
     let startPage = Math.max(1, currentPage - Math.floor(visiblePageLinks / 2));
     let endPage = Math.min(totalPages, startPage + visiblePageLinks - 1);
-
+  
     // Adjust startPage if endPage is too close to totalPages
     if (endPage - startPage + 1 < visiblePageLinks) {
       startPage = Math.max(1, endPage - visiblePageLinks + 1);
     }
-
+  
     // Create and insert page number buttons
     for (let i = startPage; i <= endPage; i++) {
       const pageLi = document.createElement("li");
@@ -256,16 +256,16 @@ document.addEventListener("DOMContentLoaded", () => {
         displayPaginatedPullRequests(pullRequests, currentPage, perPage);
         updateActivePage(ul);
         updatePaginationButtons(ul, totalPages);
-        renderPageLinks(ul, totalPages); // Re-render page links
+        renderPageLinks(ul, totalPages, pullRequests); // Pass pullRequests
       });
       pageLi.appendChild(pageLink);
       // Insert before the "Next" button
       ul.insertBefore(pageLi, ul.querySelector(".pagination-item:last-child"));
     }
-
+  
     updateActivePage(ul);
   }
-
+  
   function updateActivePage(paginationList) {
     const pageLinks = paginationList.querySelectorAll("a");
     pageLinks.forEach((link, index) => {
@@ -276,23 +276,24 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-
+  
   function updatePaginationButtons(paginationList, totalPages) {
     const prevLi = paginationList.querySelector(".pagination-item:first-child");
     const nextLi = paginationList.querySelector(".pagination-item:last-child");
-
+  
     prevLi.classList.toggle("disabled", currentPage === 1);
     nextLi.classList.toggle("disabled", currentPage === totalPages);
   }
-
+  
   function displayError(message) {
     errorMessage.textContent = message;
     errorMessage.style.display = "block";
   }
-
+  
   function hideError() {
     errorMessage.style.display = "none";
   }
-
+  
   updateRepoHeader();
-});
+  });
+  ;
