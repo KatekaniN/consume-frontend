@@ -159,11 +159,11 @@ document.addEventListener("DOMContentLoaded", () => {
     paginatedPRs.forEach((pr) => {
       const li = document.createElement("li");
       li.innerHTML = `
-              <strong>${pr.title}</strong><br>
-              User: ${pr.user}<br>
-              State: ${pr.state}<br>
-              Created: ${pr.created_at}
-          `;
+            <strong>${pr.title}</strong><br>
+            User: ${pr.user}<br>
+            State: ${pr.state}<br>
+            Created: ${pr.created_at}
+        `;
       ul.appendChild(li);
     });
 
@@ -193,6 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
         currentPage--;
         displayPaginatedPullRequests(pullRequests, currentPage, perPage);
         updateActivePage(ul);
+        updatePaginationButtons(ul, totalPages); // Update button states
       }
     });
     prevLi.appendChild(prevLink);
@@ -211,6 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
         currentPage = pageNumber;
         displayPaginatedPullRequests(pullRequests, currentPage, perPage);
         updateActivePage(ul);
+        updatePaginationButtons(ul, totalPages); // Update button states
       });
       pageLi.appendChild(pageLink);
       ul.appendChild(pageLi);
@@ -228,6 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
         currentPage++;
         displayPaginatedPullRequests(pullRequests, currentPage, perPage);
         updateActivePage(ul);
+        updatePaginationButtons(ul, totalPages); // Update button states
       }
     });
     nextLi.appendChild(nextLink);
@@ -236,9 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
     paginationContainer.innerHTML = "";
     paginationContainer.appendChild(ul);
     updateActivePage(ul);
-
-    prevLi.classList.toggle("disabled", currentPage === 1);
-    nextLi.classList.toggle("disabled", currentPage === totalPages);
+    updatePaginationButtons(ul, totalPages); // Initial button states
   }
 
   function updateActivePage(paginationList) {
@@ -250,6 +251,14 @@ document.addEventListener("DOMContentLoaded", () => {
         link.classList.remove("active");
       }
     });
+  }
+
+  function updatePaginationButtons(paginationList, totalPages) {
+    const prevLi = paginationList.querySelector(".pagination-item:first-child");
+    const nextLi = paginationList.querySelector(".pagination-item:last-child");
+
+    prevLi.classList.toggle("disabled", currentPage === 1);
+    nextLi.classList.toggle("disabled", currentPage === totalPages);
   }
 
   function displayError(message) {
